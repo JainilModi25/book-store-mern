@@ -6,6 +6,7 @@ import { Book } from './models/bookModel.js';
 const app = express();
 app.use(express.json())
 
+
 app.get('/books', async (req, res) => {
   try{
     const books = await Book.find({})
@@ -16,6 +17,7 @@ app.get('/books', async (req, res) => {
     res.status(500).send({ message: err.message });  //internal server error
   }
 })
+
 
 //get book by id
 app.get("/books/:id", async (req, res) => {
@@ -34,6 +36,33 @@ app.get("/books/:id", async (req, res) => {
   }
 });
 
+
+//update book by id
+app.put('/books/:id', async (req, res) => {
+  try{
+    if (!req.body.title ||
+        !req.body.author ||
+        !req.body.publishYear){
+          return res.status(400).send({
+            message: 'Send all the required fields: title, author, publishYear'
+          });
+        }
+
+        const {id} = req.params;
+        const result = await Book.findByIdAndUpdate(id, req.body);
+
+        if(!result){
+          return res.status(404).json({message: "Book not found. Check its id again!"});
+        }
+  }
+  catch(err){
+    console.log(err.message);
+    res.status(500).send({message:err.message})
+  }
+})
+
+
+//post request route for creating a new book
 app.post('/books', async (req, res) => {
     try {
         if (
@@ -75,5 +104,3 @@ mongoose
         console.log(err);
         
     })
-
-
