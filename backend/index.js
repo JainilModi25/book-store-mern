@@ -13,10 +13,26 @@ app.get('/books', async (req, res) => {
   }
   catch(err){
     console.log(err.message);
-    res.status(500).send({ message: error.message });
-
+    res.status(500).send({ message: err.message });  //internal server error
   }
 })
+
+//get book by id
+app.get("/books/:id", async (req, res) => {
+  try {
+    const {id} = req.params;
+    const book = await Book.findById(id);
+    if (!book) {
+      return res.status(404).json({ message: "Book not found" });
+    }
+
+    return res.status(200).json(book);
+
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).send({ message: err.message });  //internal server error
+  }
+});
 
 app.post('/books', async (req, res) => {
     try {
