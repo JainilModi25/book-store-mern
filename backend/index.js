@@ -6,11 +6,17 @@ import { Book } from './models/bookModel.js';
 const app = express();
 app.use(express.json())
 
-app.get('/', (req,res) => {
-    console.log(req);
-    return res.status(234).send("Hello World");
-    
-});
+app.get('/books', async (req, res) => {
+  try{
+    const books = await Book.find({})
+    return res.status(200).json(books)
+  }
+  catch(err){
+    console.log(err.message);
+    res.status(500).send({ message: error.message });
+
+  }
+})
 
 app.post('/books', async (req, res) => {
     try {
